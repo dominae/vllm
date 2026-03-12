@@ -3,6 +3,7 @@
 
 from unittest.mock import MagicMock
 
+<<<<<<< HEAD
 import pytest
 import torch
 
@@ -14,6 +15,10 @@ if current_platform.is_cuda():
         allow_module_level=True,
     )
 
+=======
+import torch
+
+>>>>>>> f9b161d3b (feat(rocm): enable FP8 + RDNA4 (gfx1201) support)
 from vllm.model_executor.layers import utils
 
 
@@ -26,7 +31,11 @@ def test_rocm_unquantized_gemm_gfx1x_wvsplitk_path(monkeypatch):
     monkeypatch.setattr("vllm.platforms.rocm.on_gfx1x", lambda: True)
     monkeypatch.setattr("vllm.platforms.rocm.on_gfx9", lambda: False)
     monkeypatch.setattr("vllm.platforms.rocm.on_gfx950", lambda: False)
+<<<<<<< HEAD
     monkeypatch.setattr(utils, "num_compute_units", lambda: 120)
+=======
+    monkeypatch.setattr(utils, "get_cu_count", lambda: 120)
+>>>>>>> f9b161d3b (feat(rocm): enable FP8 + RDNA4 (gfx1201) support)
 
     wvsplitk_mock = MagicMock(side_effect=lambda w, x_view, _, __: x_view @ w.t())
     monkeypatch.setattr(utils.ops, "wvSplitK", wvsplitk_mock)
@@ -50,7 +59,11 @@ def test_rocm_unquantized_gemm_gfx1x_n_gt_4_falls_back(monkeypatch):
     monkeypatch.setattr("vllm.platforms.rocm.on_gfx1x", lambda: True)
     monkeypatch.setattr("vllm.platforms.rocm.on_gfx9", lambda: False)
     monkeypatch.setattr("vllm.platforms.rocm.on_gfx950", lambda: False)
+<<<<<<< HEAD
     monkeypatch.setattr(utils, "num_compute_units", lambda: 120)
+=======
+    monkeypatch.setattr(utils, "get_cu_count", lambda: 120)
+>>>>>>> f9b161d3b (feat(rocm): enable FP8 + RDNA4 (gfx1201) support)
 
     wvsplitk_mock = MagicMock(side_effect=lambda w, x_view, _, __: x_view @ w.t())
     monkeypatch.setattr(utils.ops, "wvSplitK", wvsplitk_mock)
@@ -74,9 +87,15 @@ def test_rocm_unquantized_gemm_gfx950_wvsplitkrc_path(monkeypatch):
     monkeypatch.setattr("vllm.platforms.rocm.on_gfx1x", lambda: False)
     monkeypatch.setattr("vllm.platforms.rocm.on_gfx9", lambda: False)
     monkeypatch.setattr("vllm.platforms.rocm.on_gfx950", lambda: True)
+<<<<<<< HEAD
     monkeypatch.setattr(utils, "num_compute_units", lambda: 120)
 
     wvsplitkrc_mock = MagicMock(side_effect=lambda x_view, w, _, __: x_view @ w.t())
+=======
+    monkeypatch.setattr(utils, "get_cu_count", lambda: 120)
+
+    wvsplitkrc_mock = MagicMock(side_effect=lambda w, x_view, _, __: x_view @ w.t())
+>>>>>>> f9b161d3b (feat(rocm): enable FP8 + RDNA4 (gfx1201) support)
     monkeypatch.setattr(utils.ops, "wvSplitKrc", wvsplitkrc_mock)
     wvsplitk_mock = MagicMock(side_effect=lambda w, x_view, _, __: x_view @ w.t())
     monkeypatch.setattr(utils.ops, "wvSplitK", wvsplitk_mock)
