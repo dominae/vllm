@@ -317,9 +317,6 @@ def use_rocm_custom_paged_attention(
             and (gqa_ratio >= 1 and gqa_ratio <= 16)
             and max_seq_len <= 128 * 1024
             and alibi_slopes is None
-<<<<<<< HEAD
-            and kv_cache_dtype == "auto"
-=======
             and (kv_cache_dtype == "auto" or fp8_ok)
             and envs.VLLM_ROCM_CUSTOM_PAGED_ATTN
 >>>>>>> f9b161d3b (feat(rocm): enable FP8 + RDNA4 (gfx1201) support)

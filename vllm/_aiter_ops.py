@@ -50,15 +50,9 @@ def is_aiter_found_and_supported() -> bool:
     VLLM_ROCM_USE_AITER=0, while preventing unwanted JIT warnings for auto-discovery.
     """
     if current_platform.is_rocm() and IS_AITER_FOUND:
-<<<<<<< HEAD
-        from vllm.platforms.rocm import on_mi3xx
-
-        return on_mi3xx()
-=======
         from vllm.platforms.rocm import on_gfx9, on_gfx12x
 
         return on_gfx9() or on_gfx12x()
->>>>>>> f9b161d3b (feat(rocm): enable FP8 + RDNA4 (gfx1201) support)
     return False
 
 
