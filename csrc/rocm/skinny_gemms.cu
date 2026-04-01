@@ -1206,7 +1206,7 @@ torch::Tensor wvSplitK(const at::Tensor& in_a, const at::Tensor& in_b,
   const cudaStream_t stream = at::cuda::getCurrentCUDAStream();
   const int max_lds_len = get_lds_size() / 2;
 
-#define WVSPLITK(_YTILE, _UNRL, _N)                                           \
+#define WVSPLITK_CFG(_YTILE, _UNRL, _N)                                           \
   {                                                                           \
     dim3 block(64, 16);                                                       \
     int __wvPrGrp = mindiv(M_in, CuCount * _YTILE, 16);                       \
@@ -1227,19 +1227,19 @@ torch::Tensor wvSplitK(const at::Tensor& in_a, const at::Tensor& in_b,
                                        CuCount);                              \
   }
 
-#define WVSPLIT_TILE(_sYT, __N)                           \
+#define WVSPLIT_TILE_CFG(_sYT, __N)                           \
   {                                                       \
     bool fit_lds = (Kbp_in * N_in <= max_lds_len);        \
     if (_sYT <= 1)                                        \
-      WVSPLITK_CFG(_THRDS, _WVPRGRP, 1, 4, __N)           \
+      WVSPLITK_CFG( 1, 4, __N)           \
     else if ((__N == 1) || (!fit_lds) || (_sYT <= 4 * 2)) \
-      WVSPLITK_CFG(_THRDS, _WVPRGRP, 2, 2, __N)           \
+      WVSPLITK_CFG(2, 2, __N)           \
     else if (_sYT <= 4 * 3)                               \
-      WVSPLITK_CFG(_THRDS, _WVPRGRP, 3, 2, __N)           \
+      WVSPLITK_CFG(3, 2, __N)           \
     else if (__N == 4)                                    \
-      WVSPLITK_CFG(_THRDS, _WVPRGRP, 4, 1, __N)           \
+      WVSPLITK_CFG( 4, 1, __N)           \
     else                                                  \
-      WVSPLITK_CFG(_THRDS, _WVPRGRP, 4, 2, __N)           \
+      WVSPLITK_CFG(4, 2, __N)           \
   }
 
   AT_DISPATCH_REDUCED_FLOATING_TYPES(in_b.scalar_type(), "wvSplitK", [&] {
@@ -1260,27 +1260,27 @@ torch::Tensor wvSplitK(const at::Tensor& in_a, const at::Tensor& in_b,
     switch (N_in) {
       case 1:
         if (use_wave32)
-          WVSPLIT_TILE_CFG(32, 16, sYT, 1)
+          WVSPLIT_TILE_CFG( sYT, 1)
         else
-          WVSPLIT_TILE_CFG(64, 16, sYT, 1)
+          WVSPLIT_TILE_CFG( sYT, 1)
         break;
       case 2:
         if (use_wave32)
-          WVSPLIT_TILE_CFG(32, 16, sYT, 2)
+          WVSPLIT_TILE_CFG( sYT, 2)
         else
-          WVSPLIT_TILE_CFG(64, 16, sYT, 2)
+          WVSPLIT_TILE_CFG( sYT, 2)
         break;
       case 3:
         if (use_wave32)
-          WVSPLIT_TILE_CFG(32, 16, sYT, 3)
+          WVSPLIT_TILE_CFG( sYT, 3)
         else
-          WVSPLIT_TILE_CFG(64, 16, sYT, 3)
+          WVSPLIT_TILE_CFG( sYT, 3)
         break;
       case 4:
         if (use_wave32)
-          WVSPLIT_TILE_CFG(32, 16, sYT, 4)
+          WVSPLIT_TILE_CFG( sYT, 4)
         else
-          WVSPLIT_TILE_CFG(64, 16, sYT, 4)
+          WVSPLIT_TILE_CFG( sYT, 4)
         break;
       default:
         throw std::runtime_error(
